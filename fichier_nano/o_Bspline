@@ -1,0 +1,78 @@
+#include <GL/gl.h>
+#include <math.h>
+#include "o_objet.h"
+#include "u_table.h"
+#include "t_geometrie.h"
+#include "figure.h"
+
+
+struct bspline
+{
+
+  /*Table_quadruplet Points_controller; // controller points
+  Table_quadruplet Points_curve; // in the curve
+  int k;
+  int n;
+  double* knot;*/
+  
+  Table_quadruplet Points_controller ;
+  Table_quadruplet Points_curve;
+  int nb_points;
+  
+} ;
+
+
+static void changement(struct bspline *o)
+{ 
+
+  
+  if ( ! (UN_CHAMP_CHANGE(o)||CREATION(o)) )
+    return ;
+  
+  if (CHAMP_CHANGE(o,Points_controller))
+  {
+    if (o->Points_controller.nb > 0 ){
+      o->nb_points = o->Points_controller.nb;
+      free(o->Points_controller.table);
+    }
+    if (o->nb_points < 2){
+      o->nb_points = 4;
+    }
+
+
+    /*
+     *      o->rond.table = malloc(o->nb_points*sizeof(Triplet));
+     *      ALLOUER(o->rond.table,o->nb_points);  
+     *      for (i=0 ; i<o->nb_points ; i++)
+     *	     {
+     *        o->rond.table[i].x = points_sur_cercle[3*i];
+             }
+     free(points_sur_cercle);   
+     */
+
+    o->.table = malloc(o->nb_points*sizeof(Triplet));
+    ALLOUER(o->bezier1.table,o->nb_points);
+
+    float t = 0; 
+    for(int i=0 ; i<o->nb_points ; i++)
+    {
+	o->bezier1.table[i].x = 0; // ?????
+	o->bezier1.table[i].y = 0;
+	o->bezier1.table[i].z = 0;
+	int n = o->points.nb -1; 
+	for(int ii=0; ii<o->points.nb; ii++)
+	{
+	  o->bezier1.table[i].x += Coff(n,ii)*pow((1-t),n-ii)*pow(t,ii)*o->points.table[ii].x ;
+	  o->bezier1.table[i].y += Coff(n,ii)*pow((1-t),n-ii)*pow(t,ii)*o->points.table[ii].y ;
+	  o->bezier1.table[i].z += Coff(n,ii)*pow((1-t),n-ii)*pow(t,ii)*o->points.table[ii].z ;	
+	}
+
+       t+=(1.0/(o->nb_points-1));
+    }
+    
+    printf("dans changement\n");
+  }
+  else
+    printf(" sans changement\n");
+}
+
